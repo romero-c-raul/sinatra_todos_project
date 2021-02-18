@@ -23,12 +23,12 @@ GEM
     tilt (2.0.10)
 
 PLATFORMS
-  x86_64-linux
+  ruby
 
 DEPENDENCIES
   erubis
-  sinatra (~> 1.4.7)
+  sinatra
   sinatra-contrib
 
 BUNDLED WITH
-   2.2.10
+   1.17.3
