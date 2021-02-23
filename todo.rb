@@ -155,3 +155,27 @@ post "/lists/:id/complete_all" do
   session[:success] = "All todos have been completed"
   redirect "/lists/#{@list_id}"
 end
+
+helpers do 
+  def all_todos_complete?(list)
+    return false unless list[:todos].size > 0
+
+    list[:todos].all? do |current_todo|
+      current_todo[:completed] == true
+    end
+  end
+
+  def completed_todos(list) 
+    list[:todos].count do |current_todo|
+      current_todo[:completed] == true
+    end
+  end
+
+  def list_class(list)
+    "complete" if all_todos_complete?(list)
+  end
+
+  def remaining_todos_count(list)
+    "#{completed_todos(list)} / #{(list[:todos].size)}"
+  end
+end
