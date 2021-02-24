@@ -47,6 +47,14 @@ def error_for_todo(name)
   end
 end
 
+def load_list(index)
+  list = session[:lists][index] if index && session[:lists][index]
+  return list if list
+
+  session[:error] = "The specified list was not found"
+  redirect "/lists"
+end
+
 # Creates a new list
 post '/lists' do
   list_name = params[:list_name].strip
@@ -60,14 +68,6 @@ post '/lists' do
     session[:success] = 'The list has been created.'
     redirect '/lists'
   end
-end
-
-def load_list(index)
-  list = session[:lists][index] if index && session[:lists][index]
-  return list if list
-
-  session[:error] = "The specified list was not found"
-  redirect "/lists"
 end
 
 # Displays a single list
@@ -103,11 +103,16 @@ post "/lists/:id" do
   end
 end
 
+# Delete a todo list
 post "/lists/:id/destroy" do
   id = params[:id].to_i
   session[:lists].delete_at(id)
-  session[:success] = "The list has been deleted"
-  redirect "/lists"
+  if env["HTTP_X_REQUESTED_WITH"] == "XMLHttpRequest"
+    "/lists"
+  else
+    session[:success] = "The list has been deleted"
+    redirect "/lists"
+  end
 end
 
 # Adds a todo to a list
@@ -133,9 +138,13 @@ post "/lists/:list_id/todos/:id/destroy" do
   todo_id = params[:id].to_i
 
   @list[:todos].delete_at(todo_id)
-  session[:success] = "The todo has been deleted"
 
-  redirect "/lists/#{@list_id}"
+  if env["HTTP_X_REQUESTED_WITH"] == "XMLHttpRequest"
+    status 204
+  else
+    session[:success] = "The todo has been deleted"
+    redirect "/lists/#{@list_id}"
+  end
 end
 
 # Update status of todo
