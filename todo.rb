@@ -81,7 +81,7 @@ end
 # Edit an existing todo list
 get "/lists/:id/edit" do
   id = params[:id].to_i
-  @list = load_list(@list_id)
+  @list = load_list(id)
 
   erb :edit_list, layout: :layout
 end
@@ -91,7 +91,7 @@ post "/lists/:id" do
   list_name = params[:list_name].strip
   error = error_for_list_name(list_name)       # Checking if error is truthy
   id = params[:id].to_i
-  @list = load_list(@list_id)
+  @list = load_list(id)
 
   if error  
     session[:error] = error
